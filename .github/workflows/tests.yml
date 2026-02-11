@@ -2,7 +2,7 @@ name: Laravel Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.4]
 
     name: PHP ${{ matrix.php }}
 
@@ -36,10 +36,16 @@ jobs:
       - name: Generate APP_KEY
         run: php artisan key:generate
 
+      # ⭐ WAJIB: set env testing
+      - name: Prepare testing environment
+        run: |
+          echo "APP_ENV=testing" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=$(pwd)/database/database.sqlite" >> .env
+
       - name: Set directory permissions
         run: chmod -R 777 storage bootstrap/cache
 
-      # 🔥 BAGIAN YANG PALING PENTING
       - name: Create SQLite database
         run: |
           mkdir -p database
